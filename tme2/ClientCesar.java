@@ -1,18 +1,20 @@
 package tme2;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client {
+public class ClientCesar {
 
 	public static void main(String[] args) {
 
 		Socket c = null;
+		CesarWriter os = null;
+		Writer w = null;
 		while(c==null){
 			try {
 				System.out.println("Tentative de connexion");
@@ -21,15 +23,16 @@ public class Client {
 
 				BufferedReader br = new BufferedReader(
 						new InputStreamReader(System.in));
-				BufferedWriter os = new BufferedWriter(new OutputStreamWriter(c.getOutputStream()));
+				w = new OutputStreamWriter(c.getOutputStream());
+				os = new CesarWriter(w, 5);
 				String str;
 				while((str = br.readLine())!=null){
 					if(str.equals("quit")) break;
 					os.write(str);
-					os.write("\n");
+					//os.write("\n");
 					os.flush();
 				}
-				c.close();
+
 
 			} catch (UnknownHostException e) {
 				System.out.println("Erreur host");
@@ -44,6 +47,10 @@ public class Client {
 				try {
 					if(c != null)
 						c.close();
+					if(w != null)
+						w.close();
+					if(os != null)
+						os.close();
 				}catch(IOException e){
 					System.out.println("Could not close socket");
 				}
